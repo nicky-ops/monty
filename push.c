@@ -6,6 +6,7 @@
  * @line_number: line number
  * Return: void
  */
+
 void push(stack_t **stack, int value, unsigned int line_number)
 {
 	if (value)
