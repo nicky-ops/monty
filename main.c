@@ -1,68 +1,24 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "monty.h"
-
-stack_t *stack = NULL; /* Global stack variable */
-
+global_var var_global;
 /**
- * main - Entry point for the Monty bytecode interpreter
- * @argc: Argument count
- * @argv: Array of argument strings
- * Return: EXIT_SUCCESS or EXIT_FAILURE
+ * main - driver function for monty program
+ * @ac: int num of arguments
+ * @av: opcode file
+ * Return: 0
  */
-int main(int argc, char *argv[])
+int main(int ac, char **av)
 {
-        if (argc != 2)
-        {
-                fprintf(stderr, "USAGE: monty file\n");
-                return (EXIT_FAILURE);
-        }
+	stack_t *stack;
 
-        FILE *file = fopen(argv[1], "r");
-        if (!file)
-        {
-                fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-                return (EXIT_FAILURE);
-        }
+	stack = NULL;
+	if (ac != 2)
+	{
+		fprintf(stderr, "USAGE: monty file\n");
+		exit(EXIT_FAILURE);
+	}
 
-        char line[1024];
-        unsigned int line_number = 0;
-        while (fgets(line, sizeof(line), file))
-        {
-                line_number++;
-                char opcode[100];
-                int argument = 0;
-                int parsed = sscanf(line, "%s %d", opcode, &argument);
-
-                if (parsed < 1)
-                {
-                        continue;
-                }
-
-                if (strcmp(opcode, "push") == 0)
-                {
-                        if (parsed < 2 || !isdigit(argument))
-                        {
-                                fprintf(stderr, "L%d: usage: push integer\n", line_number);
-                                fclose(file);
-                                return (EXIT_FAILURE);
-                        }
-                        push(&stack, line_number, argument);
-                }
-                else if (strcmp(opcode, "pall") == 0)
-                {
-                        pall(&stack, line_number);
-                }
-                else
-                {
-                        fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
-                        fclose(file);
-                        return (EXIT_FAILURE);
-                }
-        }
-
-        fclose(file);
-        return (EXIT_SUCCESS);
+	read_file(av[1], &stack);
+    /* recordar liberar memorias */
+	free_dlistint(stack);
+	return (0);
 }
